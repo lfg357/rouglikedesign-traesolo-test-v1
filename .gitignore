@@ -14,3 +14,11 @@ exports/
 .ide/
 .vscode/
 .idea/
+# 临时解压根目录（原始美术资源，已精选到 assets/）
+art_temp/
+# 原始美术材料目录（不要入库，最终素材在 assets/）
+美术材料/
+# 任何大体积临时产物
+*.zip
+*.rar
+*.7z

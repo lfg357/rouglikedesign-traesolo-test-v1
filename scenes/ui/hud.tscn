@@ -1,0 +1,116 @@
+[gd_scene load_steps=2 format=3 uid="uid://hud_ui"]
+
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_script"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_script")
+
+[node name="HpPanel" type="Node2D" parent="."]
+position = Vector2(30, 30)
+
+[node name="PanelBg" type="Polygon2D" parent="HpPanel"]
+color = Color(0.12, 0.1, 0.14, 0.75)
+polygon = PackedVector2Array(0, -2, 8, -8, 300, -8, 310, -2, 310, 52, 300, 58, 8, 58, 0, 52)
+
+[node name="PanelInk" type="Polygon2D" parent="HpPanel"]
+color = Color(0.05, 0.03, 0.06, 0.4)
+polygon = PackedVector2Array(4, 0, 10, -5, 295, -5, 302, 0, 302, 48, 295, 53, 10, 53, 4, 48)
+
+[node name="PanelBorder" type="Polygon2D" parent="HpPanel"]
+color = Color(0.75, 0.65, 0.45, 0.6)
+polygon = PackedVector2Array(-2, -4, 10, -10, 298, -10, 312, -4, 312, 54, 298, 60, 10, 60, -2, 54)
+
+[node name="HpIcon" type="Polygon2D" parent="HpPanel"]
+position = Vector2(18, 25)
+color = Color(0.9, 0.25, 0.25, 0.9)
+polygon = PackedVector2Array(0, -6, 4, -10, 10, -4, 0, 8, -10, -4, -4, -10)
+
+[node name="HpBarBg" type="Polygon2D" parent="HpPanel"]
+position = Vector2(40, 15)
+color = Color(0.2, 0.15, 0.22, 0.8)
+polygon = PackedVector2Array(0, 0, 240, 0, 244, 3, 244, 17, 240, 20, 0, 20, -4, 17, -4, 3)
+
+[node name="HpBarFill" type="Polygon2D" parent="HpPanel"]
+position = Vector2(40, 15)
+color = Color(0.85, 0.2, 0.2, 0.95)
+polygon = PackedVector2Array(0, 0, 240, 0, 244, 3, 244, 17, 240, 20, 0, 20, -4, 17, -4, 3)
+
+[node name="HpBarHighlight" type="Polygon2D" parent="HpPanel"]
+position = Vector2(40, 15)
+color = Color(1, 0.6, 0.5, 0.3)
+polygon = PackedVector2Array(0, 0, 240, 0, 244, 3, 244, 7, 0, 7, -4, 4, -4, 3)
+
+[node name="HpText" type="Label" parent="HpPanel"]
+offset_left = 40.0
+offset_top = 12.0
+offset_right = 284.0
+offset_bottom = 35.0
+theme_override_colors/font_color = Color(1, 0.95, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 4
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "100 / 100"
+
+[node name="QiPanel" type="Node2D" parent="."]
+position = Vector2(30, 95)
+
+[node name="QiPanelBg" type="Polygon2D" parent="QiPanel"]
+color = Color(0.1, 0.08, 0.14, 0.7)
+polygon = PackedVector2Array(0, -2, 6, -6, 200, -6, 206, -2, 206, 38, 200, 42, 6, 42, 0, 38)
+
+[node name="QiIcon" type="Polygon2D" parent="QiPanel"]
+position = Vector2(14, 18)
+color = Color(0.4, 0.7, 0.95, 0.9)
+polygon = PackedVector2Array(0, -8, 5, -3, 8, 2, 5, 7, 0, 10, -5, 7, -8, 2, -5, -3)
+
+[node name="QiBarBg" type="Polygon2D" parent="QiPanel"]
+position = Vector2(32, 10)
+color = Color(0.15, 0.12, 0.2, 0.8)
+polygon = PackedVector2Array(0, 0, 150, 0, 154, 2, 154, 14, 150, 16, 0, 16, -4, 14, -4, 2)
+
+[node name="QiBarFill" type="Polygon2D" parent="QiPanel"]
+position = Vector2(32, 10)
+color = Color(0.5, 0.8, 1, 0.9)
+polygon = PackedVector2Array(0, 0, 150, 0, 154, 2, 154, 14, 150, 16, 0, 16, -4, 14, -4, 2)
+
+[node name="QiText" type="Label" parent="QiPanel"]
+offset_left = 30.0
+offset_top = 7.0
+offset_right = 186.0
+offset_bottom = 28.0
+theme_override_colors/font_color = Color(0.85, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
+theme_override_constants/outline_size = 3
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "灵气: 0"
+
+[node name="StonePanel" type="Node2D" parent="."]
+position = Vector2(250, 95)
+
+[node name="StonePanelBg" type="Polygon2D" parent="StonePanel"]
+color = Color(0.12, 0.1, 0.1, 0.7)
+polygon = PackedVector2Array(0, -2, 6, -6, 120, -6, 126, -2, 126, 38, 120, 42, 6, 42, 0, 38)
+
+[node name="StoneIcon" type="Polygon2D" parent="StonePanel"]
+position = Vector2(14, 18)
+color = Color(0.95, 0.8, 0.3, 0.95)
+polygon = PackedVector2Array(0, -7, 6, -3, 6, 4, 0, 9, -6, 4, -6, -3)
+
+[node name="StoneIconInner" type="Polygon2D" parent="StonePanel"]
+position = Vector2(14, 17)
+color = Color(1, 0.95, 0.6, 0.7)
+polygon = PackedVector2Array(0, -4, 3, -2, 3, 1, 0, 5, -3, 1, -3, -2)
+
+[node name="StoneText" type="Label" parent="StonePanel"]
+offset_left = 28.0
+offset_top = 7.0
+offset_right = 120.0
+offset_bottom = 28.0
+theme_override_colors/font_color = Color(1, 0.92, 0.6, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
+theme_override_constants/outline_size = 3
+horizontal_alignment = 0
+vertical_alignment = 1
+text = "灵石: 0"

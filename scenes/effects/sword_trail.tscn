@@ -1,0 +1,44 @@
+[gd_scene load_steps=8 format=3 uid="uid://sword_trail"]
+
+[ext_resource type="Script" path="res://scripts/effects/sword_trail.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/effects/sword_trail_0.png" id="2_f0"]
+[ext_resource type="Texture2D" path="res://assets/effects/sword_trail_1.png" id="3_f1"]
+[ext_resource type="Texture2D" path="res://assets/effects/sword_trail_2.png" id="4_f2"]
+[ext_resource type="Texture2D" path="res://assets/effects/sword_trail_3.png" id="5_f3"]
+[ext_resource type="Texture2D" path="res://assets/effects/sword_trail_4.png" id="6_f4"]
+[ext_resource type="Texture2D" path="res://assets/effects/sword_trail_5.png" id="7_f5"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_trail"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_f0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_f1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_f2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_f3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_f4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_f5")
+}],
+"loop": false,
+"name": &"trail",
+"speed": 24.0
+}]
+
+[node name="SwordTrail" type="Node2D"]
+scale = Vector2(2.0, 2.0)
+script = ExtResource("1_script")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_trail")
+animation = &"trail"
+centered = true

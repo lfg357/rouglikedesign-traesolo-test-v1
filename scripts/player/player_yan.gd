@@ -1,16 +1,14 @@
 extends CharacterBody2D
 ## 燕无归 · 身法近战（手感旗舰）
-## 操作：WASD 移动 / 左键 三段连击 / Space 瞬移闪避
-## 核心手感：连击起承转合 + 瞬移残影 + 命中顿帧
+## 资源：samurai 像素精灵表
+## 修复：脚底对齐 + 剑光拖尾
 
 class_name PlayerYan
 
-# ─── 属性 ───
 @export var max_hp: int = 100
 @export var move_speed: float = 230.0
 var current_hp: int = 100
 
-# 闪避
 @export var dodge_distance: float = 150.0
 @export var dodge_duration: float = 0.25
 @export var dodge_iframes: float = 0.5
@@ -20,218 +18,247 @@ var _is_dodging: bool = false
 var _dodge_dir: Vector2 = Vector2.ZERO
 var _dodge_timer: float = 0.0
 
-# 连击
 @export var combo_window: float = 2.5
-var _combo_step: int = 0  # 0-2 三段
+var _combo_step: int = 0
 var _combo_timer: float = 0.0
 var _is_attacking: bool = false
 var _attack_timer: float = 0.0
 var _attack_duration: float = 0.3
 
-# 第三段突进（锁定 velocity 约 8 帧）
-const DASH_DURATION: float = 0.13  # ~8 帧 @60fps
+const DASH_DURATION: float = 0.13
 var _dash_timer: float = 0.0
 
-# 伤害
 @export var base_damage: float = 12.0
 var _facing_dir: Vector2 = Vector2.RIGHT
 
-# 无敌帧
 var _iframes: float = 0.0
 
-# 信号
+const SwordTrailScene: PackedScene = preload("res://scenes/effects/sword_trail.tscn")
+
+# 不同动画的脚底对齐偏移（修复 sprite sheet 切片造成的"图片移动"）
+# 0 = idle/light 高度 22; 5 = run 高度 32 差 10px 缩放2.8 = -5; 7 = heavy 高度 36 差 14px 缩放2.8 = -7
+const _ANIM_OFFSETS: Dictionary = {
+	"idle": Vector2(0, 0),
+	"run": Vector2(0, -5),
+	"light_attack": Vector2(0, 0),
+	"heavy_attack": Vector2(0, -7),
+}
+
 signal hp_changed(current: int, max_hp: int)
 signal player_died()
 
-# ─── 子节点引用 ───
+@onready var sprite: AnimatedSprite2D = $Visual/AnimatedSprite2D
 @onready var hitbox: Area2D = $Hitbox
 @onready var hurtbox: Area2D = $Hurtbox
-@onready var sprite: Sprite2D = $Sprite
 @onready var afterimage_timer: Timer = $AfterimageTimer
 
 func _ready() -> void:
-    current_hp = max_hp
-    add_to_group("player")
-    hurtbox.area_entered.connect(_on_enemy_attack_hit)
-    hitbox.area_entered.connect(_on_hit_enemy)
+	current_hp = max_hp
+	add_to_group("player")
+	sprite.play("idle")
+	sprite.animation_finished.connect(_on_anim_finished)
+	hurtbox.area_entered.connect(_on_enemy_attack_hit)
+	hitbox.area_entered.connect(_on_hit_enemy)
 
-# ─── 主循环 ───
 func _physics_process(delta: float) -> void:
-    _update_timers(delta)
+	_update_timers(delta)
 
-    if _is_dodging:
-        _process_dodge(delta)
-    elif _dash_timer > 0:
-        # 第三段突进期间：锁定 velocity，不读输入
-        velocity = _facing_dir * move_speed * 2.0
-    elif _is_attacking:
-        _process_attack(delta)
-        _idle_movement(delta * 0.3)  # 攻击中减速移动
-    else:
-        _handle_input()
-        _idle_movement(delta)
+	if _is_dodging:
+		_process_dodge(delta)
+	elif _dash_timer > 0:
+		velocity = _facing_dir * move_speed * 2.0
+	elif _is_attacking:
+		_process_attack(delta)
+		_idle_movement(delta * 0.3)
+	else:
+		_handle_input()
+		_idle_movement(delta)
 
-    move_and_slide()
+	move_and_slide()
+	_update_anim()
 
-# ─── 计时器更新 ───
+func _update_anim() -> void:
+	if _is_attacking:
+		return
+	if _is_dodging:
+		return
+	if velocity.length() > 30.0:
+		_play_anim("run")
+	else:
+		_play_anim("idle")
+
+func _play_anim(anim: String) -> void:
+	if sprite.animation == anim:
+		return
+	sprite.stop()
+	if _ANIM_OFFSETS.has(anim):
+		sprite.offset = _ANIM_OFFSETS[anim]
+	sprite.play(anim)
+
 func _update_timers(delta: float) -> void:
-    if _dodge_cd_timer > 0:
-        _dodge_cd_timer -= delta
-    if _dash_timer > 0:
-        _dash_timer -= delta
-    if _combo_timer > 0:
-        _combo_timer -= delta
-        if _combo_timer <= 0:
-            _combo_step = 0
-    if _iframes > 0:
-        _iframes -= delta
+	if _dodge_cd_timer > 0:
+		_dodge_cd_timer -= delta
+	if _dash_timer > 0:
+		_dash_timer -= delta
+	if _combo_timer > 0:
+		_combo_timer -= delta
+		if _combo_timer <= 0:
+			_combo_step = 0
+	if _iframes > 0:
+		_iframes -= delta
 
-# ─── 输入处理 ───
 func _handle_input() -> void:
-    # 攻击
-    if Input.is_action_just_pressed("attack"):
-        _start_attack()
-    
-    # 闪避
-    if Input.is_action_just_pressed("dodge") and _dodge_cd_timer <= 0:
-        _start_dodge()
+	if Input.is_action_just_pressed("attack"):
+		_start_attack()
 
-# ─── 移动 ───
+	if Input.is_action_just_pressed("dodge") and _dodge_cd_timer <= 0:
+		_start_dodge()
+
 func _idle_movement(delta: float) -> void:
-    var input_dir: Vector2 = Vector2(
-        Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
-        Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
-    ).normalized()
-    
-    var speed_mult: float = GameState.stats.move_mul
-    velocity = input_dir * move_speed * speed_mult
-    
-    if input_dir.length() > 0.1:
-        _facing_dir = input_dir
-        sprite.flip_h = input_dir.x < 0
+	var input_dir: Vector2 = Vector2(
+		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
+		Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
+	).normalized()
 
-# ─── 三段连击 ───
+	var speed_mult: float = GameState.stats.move_mul
+	velocity = input_dir * move_speed * speed_mult
+
+	if input_dir.length() > 0.1:
+		_facing_dir = input_dir
+		sprite.flip_h = input_dir.x < 0
+
 func _start_attack() -> void:
-    _is_attacking = true
-    _attack_timer = _attack_duration
-    _combo_timer = combo_window
-    
-    # 根据连击段数调整伤害和手感
-    match _combo_step:
-        0:
-            _attack_duration = 0.25
-        1:
-            _attack_duration = 0.28
-        2:
-            _attack_duration = 0.4  # 第三段最重，突进
-            _dash_on_third_hit()
-    
-    # 更新 hitbox 位置
-    _update_hitbox_position()
+	_is_attacking = true
+	_attack_timer = _attack_duration
+	_combo_timer = combo_window
+
+	match _combo_step:
+		0:
+			_attack_duration = 0.32
+			_play_anim("light_attack")
+			_spawn_sword_trail(0.05)
+		1:
+			_attack_duration = 0.32
+			_play_anim("light_attack")
+			_spawn_sword_trail(0.10)
+		2:
+			_attack_duration = 0.55
+			_play_anim("heavy_attack")
+			_spawn_sword_trail(0.15)
+			_dash_on_third_hit()
+
+	_update_hitbox_position()
+
+func _spawn_sword_trail(delay: float) -> void:
+	# 延迟到挥剑中后段生成剑光，位置在 hitbox 中心
+	await get_tree().create_timer(delay).timeout
+	if not is_inside_tree():
+		return
+	var trail: Node2D = SwordTrailScene.instantiate()
+	trail.global_position = global_position + _facing_dir * 50
+	if _facing_dir.x < 0:
+		trail.scale = Vector2(-2.0, 2.0)
+	get_parent().add_child(trail)
 
 func _process_attack(delta: float) -> void:
-    _attack_timer -= delta
-    if _attack_timer <= 0:
-        _is_attacking = false
-        _combo_step = (_combo_step + 1) % 3
+	_attack_timer -= delta
+	if _attack_timer <= 0:
+		_is_attacking = false
+		_combo_step = (_combo_step + 1) % 3
+
+func _on_anim_finished() -> void:
+	if sprite.animation == "light_attack" or sprite.animation == "heavy_attack":
+		if _is_attacking:
+			return
+		_play_anim("idle")
 
 func _update_hitbox_position() -> void:
-    hitbox.position = _facing_dir * 40.0
+	hitbox.position = _facing_dir * 50.0
 
 func _dash_on_third_hit() -> void:
-    # 第三段附带小突进：锁定 velocity 约 8 帧
-    _dash_timer = DASH_DURATION
-    velocity = _facing_dir * move_speed * 2.0
+	_dash_timer = DASH_DURATION
+	velocity = _facing_dir * move_speed * 2.0
 
-# ─── 瞬移闪避 ───
 func _start_dodge() -> void:
-    _is_dodging = true
-    _dodge_timer = dodge_duration
-    _dodge_cd_timer = dodge_cooldown
-    _iframes = dodge_iframes
-    
-    # 闪避方向：有输入按输入方向，无输入按朝向
-    var input_dir: Vector2 = Vector2(
-        Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
-        Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
-    ).normalized()
-    
-    _dodge_dir = input_dir if input_dir.length() > 0.1 else _facing_dir
-    
-    # 触发闪避事件
-    CombatEvents.dodge_success.emit(global_position)
-    
-    # 残影效果（由打击感系统监听实现）
+	_is_dodging = true
+	_dodge_timer = dodge_duration
+	_dodge_cd_timer = dodge_cooldown
+	_iframes = dodge_iframes
+
+	var input_dir: Vector2 = Vector2(
+		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
+		Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
+	).normalized()
+
+	_dodge_dir = input_dir if input_dir.length() > 0.1 else _facing_dir
+
+	CombatEvents.dodge_success.emit(global_position)
 
 func _process_dodge(delta: float) -> void:
-    _dodge_timer -= delta
-    var speed: float = dodge_distance / dodge_duration
-    velocity = _dodge_dir * speed
-    
-    if _dodge_timer <= 0:
-        _is_dodging = false
-        velocity = Vector2.ZERO
+	_dodge_timer -= delta
+	var speed: float = dodge_distance / dodge_duration
+	velocity = _dodge_dir * speed
 
-# ─── 命中敌人 ───
+	if _dodge_timer <= 0:
+		_is_dodging = false
+		velocity = Vector2.ZERO
+
 func _on_hit_enemy(area: Area2D) -> void:
-    if not _is_attacking:
-        return
-    
-    # 计算伤害
-    var damage: float = base_damage * GameState.stats.damage_mul
-    var is_crit: bool = randf() < GameState.stats.crit_chance
-    if is_crit:
-        damage *= GameState.stats.crit_damage
-    
-    # 发送命中事件（打击感系统监听）
-    CombatEvents.trigger_hit(area.global_position, damage, is_crit, "water")
-    
-    # 吸血
-    if GameState.stats.lifesteal > 0:
-        heal(int(damage * GameState.stats.lifesteal))
+	if not _is_attacking:
+		return
 
-    # 通知敌人受伤（area 是敌人 Hurtbox，take_damage 在父节点 CharacterBody2D 上）
-    var target: Node = area.get_parent()
-    if target.has_method("take_damage"):
-        target.take_damage(damage, is_crit)
+	var target: Node = area.get_parent()
+	if target == self:
+		return
+	if not target.is_in_group("enemy"):
+		return
 
-# ─── 受伤 ───
+	var damage: float = base_damage * GameState.stats.damage_mul
+	var is_crit: bool = randf() < GameState.stats.crit_chance
+	if is_crit:
+		damage *= GameState.stats.crit_damage
+
+	CombatEvents.trigger_hit(area.global_position, damage, is_crit, "water")
+
+	if GameState.stats.lifesteal > 0:
+		heal(int(damage * GameState.stats.lifesteal))
+
+	if target.has_method("take_damage"):
+		target.take_damage(damage, is_crit)
+
 func _on_enemy_attack_hit(area: Area2D) -> void:
-    if _iframes > 0:
-        return
-    
-    var damage: float = 10.0  # 默认值，实际由敌人提供
-    if area.has_method("get_damage"):
-        damage = area.get_damage()
-    
-    # 减伤
-    damage *= (1.0 - GameState.stats.damage_reduce)
-    take_damage(int(damage))
+	if _iframes > 0:
+		return
+
+	var damage: float = 10.0
+	if area.has_method("get_damage"):
+		damage = area.get_damage()
+
+	damage *= (1.0 - GameState.stats.damage_reduce)
+	take_damage(int(damage))
 
 func take_damage(amount: int) -> void:
-    if _iframes > 0:
-        return
-    
-    current_hp -= amount
-    current_hp = max(0, current_hp)
-    hp_changed.emit(current_hp, max_hp)
-    CombatEvents.player_damaged.emit(amount)
-    
-    # 受击无敌帧
-    _iframes = 0.3
-    
-    if current_hp <= 0:
-        _die()
+	if _iframes > 0:
+		return
+
+	current_hp -= amount
+	current_hp = max(0, current_hp)
+	hp_changed.emit(current_hp, max_hp)
+	CombatEvents.player_damaged.emit(amount)
+
+	_iframes = 0.3
+
+	if current_hp <= 0:
+		_die()
 
 func heal(amount: int) -> void:
-    current_hp = min(max_hp, current_hp + amount)
-    hp_changed.emit(current_hp, max_hp)
+	current_hp = min(max_hp, current_hp + amount)
+	hp_changed.emit(current_hp, max_hp)
 
 func _die() -> void:
-    player_died.emit()
-    set_physics_process(false)
+	player_died.emit()
+	set_physics_process(false)
 
-# ─── 回血（每秒） ───
 func _process(delta: float) -> void:
-    if GameState.stats.hp_regen > 0 and current_hp > 0:
-        heal(int(GameState.stats.hp_regen * delta))
+	if GameState.stats.hp_regen > 0 and current_hp > 0:
+		heal(int(GameState.stats.hp_regen * delta))

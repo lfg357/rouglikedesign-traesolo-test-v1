@@ -1,0 +1,50 @@
+[gd_scene load_steps=6 format=3 uid="uid://hit_ink_effect"]
+
+[ext_resource type="Script" path="res://scripts/effects/hit_ink_effect.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/effects/smoke_fx_04.png" id="2_tex"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_slash_0"]
+atlas = ExtResource("2_tex")
+region = Rect2(0, 568, 102, 71)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_slash_1"]
+atlas = ExtResource("2_tex")
+region = Rect2(102, 568, 102, 71)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_slash_2"]
+atlas = ExtResource("2_tex")
+region = Rect2(204, 568, 102, 71)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_slash_3"]
+atlas = ExtResource("2_tex")
+region = Rect2(306, 568, 102, 71)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hit"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_slash_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_slash_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_slash_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_slash_3")
+}],
+"loop": false,
+"name": &"hit",
+"speed": 22.0
+}]
+
+[node name="HitInkEffect" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -10)
+scale = Vector2(0.7, 0.7)
+sprite_frames = SubResource("SpriteFrames_hit")
+animation = &"hit"
+centered = true

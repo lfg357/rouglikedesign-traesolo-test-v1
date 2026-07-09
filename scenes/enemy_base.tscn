@@ -1,21 +1,133 @@
-[gd_scene load_steps=5 format=3 uid="uid://enemy_base_scene"]
+[gd_scene load_steps=22 format=3 uid="uid://enemy_base_scene"]
 
 [ext_resource type="Script" path="res://scripts/enemy/enemy_base.gd" id="1_enemy"]
+[ext_resource type="Texture2D" path="res://assets/enemy/demon_idle.png" id="2_idle"]
+[ext_resource type="Texture2D" path="res://assets/enemy/demon_walk.png" id="3_walk"]
+[ext_resource type="Texture2D" path="res://assets/enemy/demon_attack.png" id="4_atk"]
+[ext_resource type="Texture2D" path="res://assets/enemy/demon_hurt.png" id="5_hurt"]
+[ext_resource type="Texture2D" path="res://assets/enemy/demon_death.png" id="6_death"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
-size = Vector2(30, 36)
+size = Vector2(22, 30)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
-size = Vector2(40, 40)
+size = Vector2(24, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_0"]
+atlas = ExtResource("2_idle")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_1"]
+atlas = ExtResource("2_idle")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_2"]
+atlas = ExtResource("2_idle")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_3"]
+atlas = ExtResource("2_idle")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_4"]
+atlas = ExtResource("2_idle")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_5"]
+atlas = ExtResource("2_idle")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_0"]
+atlas = ExtResource("3_walk")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_1"]
+atlas = ExtResource("3_walk")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_atk_0"]
+atlas = ExtResource("4_atk")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_atk_1"]
+atlas = ExtResource("4_atk")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_atk_2"]
+atlas = ExtResource("4_atk")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_demon"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_5")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_1")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_atk_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_atk_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_atk_2")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
+}]
 
 [node name="EnemyBase" type="CharacterBody2D"]
 script = ExtResource("1_enemy")
+collision_layer = 1
+collision_mask = 1
 
 [node name="BodyShape" type="CollisionShape2D" parent="."]
+position = Vector2(0, 6)
 shape = SubResource("RectangleShape2D_body")
 
-[node name="Sprite" type="Sprite2D" parent="."]
-modulate = Color(1, 0.7, 0.7, 1)
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Shadow" type="Polygon2D" parent="Visual"]
+position = Vector2(0, 22)
+color = Color(0.05, 0.02, 0.03, 0.5)
+polygon = PackedVector2Array(-14, -2, 14, -2, 18, 3, -18, 3)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visual"]
+position = Vector2(0, 4)
+sprite_frames = SubResource("SpriteFrames_demon")
+animation = &"idle"
 
 [node name="Hurtbox" type="Area2D" parent="."]
 
@@ -23,7 +135,7 @@ modulate = Color(1, 0.7, 0.7, 1)
 shape = SubResource("RectangleShape2D_hurt")
 
 [node name="AttackHitbox" type="Area2D" parent="."]
-position = Vector2(35, 0)
+position = Vector2(28, 0)
 
 [node name="AttackShape" type="CollisionShape2D" parent="AttackHitbox"]
 shape = SubResource("RectangleShape2D_hurt")
