@@ -17,6 +17,7 @@ size = Vector2(70, 70)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
 size = Vector2(28, 56)
 
+; idle: 3 帧 (内容相似 → 慢速呼吸)
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_0"]
 atlas = ExtResource("2_idle")
 region = Rect2(0, 0, 30, 22)
@@ -29,6 +30,7 @@ region = Rect2(30, 0, 30, 22)
 atlas = ExtResource("2_idle")
 region = Rect2(60, 0, 30, 22)
 
+; run: 8 帧 (完整跑步循环)
 [sub_resource type="AtlasTexture" id="AtlasTexture_run_0"]
 atlas = ExtResource("3_run")
 region = Rect2(0, 0, 40, 32)
@@ -61,6 +63,7 @@ region = Rect2(240, 0, 40, 32)
 atlas = ExtResource("3_run")
 region = Rect2(280, 0, 40, 32)
 
+; light_attack: 6 帧 (挥剑过程)
 [sub_resource type="AtlasTexture" id="AtlasTexture_light_0"]
 atlas = ExtResource("4_light")
 region = Rect2(0, 0, 51, 22)
@@ -85,41 +88,26 @@ region = Rect2(204, 0, 51, 22)
 atlas = ExtResource("4_light")
 region = Rect2(255, 0, 53, 22)
 
+; heavy_attack: 仅取 5 帧 (1 蓄力 + 4 拔刀挥砍) - 去掉原资源 5 帧重复蓄力段
 [sub_resource type="AtlasTexture" id="AtlasTexture_heavy_0"]
 atlas = ExtResource("5_heavy")
 region = Rect2(0, 0, 68, 36)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_heavy_1"]
 atlas = ExtResource("5_heavy")
-region = Rect2(68, 0, 68, 36)
+region = Rect2(272, 0, 68, 36)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_heavy_2"]
 atlas = ExtResource("5_heavy")
-region = Rect2(136, 0, 68, 36)
+region = Rect2(340, 0, 68, 36)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_heavy_3"]
 atlas = ExtResource("5_heavy")
-region = Rect2(204, 0, 68, 36)
+region = Rect2(408, 0, 68, 36)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_heavy_4"]
 atlas = ExtResource("5_heavy")
-region = Rect2(272, 0, 68, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_heavy_5"]
-atlas = ExtResource("5_heavy")
-region = Rect2(340, 0, 68, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_heavy_6"]
-atlas = ExtResource("5_heavy")
-region = Rect2(408, 0, 68, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_heavy_7"]
-atlas = ExtResource("5_heavy")
 region = Rect2(476, 0, 68, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_heavy_8"]
-atlas = ExtResource("5_heavy")
-region = Rect2(544, 0, 72, 36)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_samurai"]
 animations = [{
@@ -135,7 +123,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle",
-"speed": 5.0
+"speed": 3.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -164,7 +152,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"run",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -187,10 +175,10 @@ animations = [{
 }],
 "loop": false,
 "name": &"light_attack",
-"speed": 18.0
+"speed": 16.0
 }, {
 "frames": [{
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_heavy_0")
 }, {
 "duration": 1.0,
@@ -204,22 +192,10 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_heavy_4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_heavy_5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_heavy_6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_heavy_7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_heavy_8")
 }],
 "loop": false,
 "name": &"heavy_attack",
-"speed": 14.0
+"speed": 10.0
 }]
 
 [node name="PlayerYan" type="CharacterBody2D"]
