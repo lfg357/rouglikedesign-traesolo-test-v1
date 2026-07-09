@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://b8x7k2m5nq3"]
+
+[ext_resource type="Script" path="res://scripts/autoload/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/combat/hit_feel_manager.gd" id="2_hitfeel"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(640, 360)
+zoom = Vector2(1, 1)
+current = true
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(640, 500)
+
+[node name="EnemiesLayer" type="Node2D" parent="."]
+
+[node name="HitFeelManager" type="Node" parent="."]
+script = ExtResource("2_hitfeel")
+
+[node name="UI" type="CanvasLayer" parent="."]
