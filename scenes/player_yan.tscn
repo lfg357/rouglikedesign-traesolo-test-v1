@@ -17,7 +17,6 @@ size = Vector2(70, 70)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
 size = Vector2(28, 56)
 
-; idle: 3 帧 (内容相似 → 慢速呼吸)
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_0"]
 atlas = ExtResource("2_idle")
 region = Rect2(0, 0, 30, 22)
@@ -30,7 +29,6 @@ region = Rect2(30, 0, 30, 22)
 atlas = ExtResource("2_idle")
 region = Rect2(60, 0, 30, 22)
 
-; run: 8 帧 (完整跑步循环)
 [sub_resource type="AtlasTexture" id="AtlasTexture_run_0"]
 atlas = ExtResource("3_run")
 region = Rect2(0, 0, 40, 32)
@@ -63,7 +61,6 @@ region = Rect2(240, 0, 40, 32)
 atlas = ExtResource("3_run")
 region = Rect2(280, 0, 40, 32)
 
-; light_attack: 6 帧 (挥剑过程)
 [sub_resource type="AtlasTexture" id="AtlasTexture_light_0"]
 atlas = ExtResource("4_light")
 region = Rect2(0, 0, 51, 22)
@@ -88,7 +85,6 @@ region = Rect2(204, 0, 51, 22)
 atlas = ExtResource("4_light")
 region = Rect2(255, 0, 53, 22)
 
-; heavy_attack: 仅取 5 帧 (1 蓄力 + 4 拔刀挥砍) - 去掉原资源 5 帧重复蓄力段
 [sub_resource type="AtlasTexture" id="AtlasTexture_heavy_0"]
 atlas = ExtResource("5_heavy")
 region = Rect2(0, 0, 68, 36)
@@ -113,13 +109,16 @@ region = Rect2(476, 0, 68, 36)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_0")
+"texture": SubResource("AtlasTexture_idle_0"),
+"texture_offset": Vector2(0, 19)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_1")
+"texture": SubResource("AtlasTexture_idle_1"),
+"texture_offset": Vector2(0, 19)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_2")
+"texture": SubResource("AtlasTexture_idle_2"),
+"texture_offset": Vector2(0, 20)
 }],
 "loop": true,
 "name": &"idle",
@@ -127,28 +126,36 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_run_0")
+"texture": SubResource("AtlasTexture_run_0"),
+"texture_offset": Vector2(0, 29)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_run_1")
+"texture": SubResource("AtlasTexture_run_1"),
+"texture_offset": Vector2(0, 29)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_run_2")
+"texture": SubResource("AtlasTexture_run_2"),
+"texture_offset": Vector2(0, 29)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_run_3")
+"texture": SubResource("AtlasTexture_run_3"),
+"texture_offset": Vector2(0, 29)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_run_4")
+"texture": SubResource("AtlasTexture_run_4"),
+"texture_offset": Vector2(0, 29)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_run_5")
+"texture": SubResource("AtlasTexture_run_5"),
+"texture_offset": Vector2(0, 29)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_run_6")
+"texture": SubResource("AtlasTexture_run_6"),
+"texture_offset": Vector2(0, 30)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_run_7")
+"texture": SubResource("AtlasTexture_run_7"),
+"texture_offset": Vector2(0, 30)
 }],
 "loop": true,
 "name": &"run",
@@ -156,22 +163,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_light_0")
+"texture": SubResource("AtlasTexture_light_0"),
+"texture_offset": Vector2(0, 20)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_light_1")
+"texture": SubResource("AtlasTexture_light_1"),
+"texture_offset": Vector2(0, 20)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_light_2")
+"texture": SubResource("AtlasTexture_light_2"),
+"texture_offset": Vector2(0, 20)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_light_3")
+"texture": SubResource("AtlasTexture_light_3"),
+"texture_offset": Vector2(0, 21)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_light_4")
+"texture": SubResource("AtlasTexture_light_4"),
+"texture_offset": Vector2(0, 21)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_light_5")
+"texture": SubResource("AtlasTexture_light_5"),
+"texture_offset": Vector2(0, 21)
 }],
 "loop": false,
 "name": &"light_attack",
@@ -179,19 +192,24 @@ animations = [{
 }, {
 "frames": [{
 "duration": 0.5,
-"texture": SubResource("AtlasTexture_heavy_0")
+"texture": SubResource("AtlasTexture_heavy_0"),
+"texture_offset": Vector2(0, 35)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_heavy_1")
+"texture": SubResource("AtlasTexture_heavy_1"),
+"texture_offset": Vector2(0, 35)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_heavy_2")
+"texture": SubResource("AtlasTexture_heavy_2"),
+"texture_offset": Vector2(0, 35)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_heavy_3")
+"texture": SubResource("AtlasTexture_heavy_3"),
+"texture_offset": Vector2(0, 35)
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_heavy_4")
+"texture": SubResource("AtlasTexture_heavy_4"),
+"texture_offset": Vector2(0, 35)
 }],
 "loop": false,
 "name": &"heavy_attack",

@@ -39,9 +39,9 @@ const SwordTrailScene: PackedScene = preload("res://scenes/effects/sword_trail.t
 # 0 = idle/light 高度 22; 5 = run 高度 32 差 10px 缩放2.8 = -5; 7 = heavy 高度 36 差 14px 缩放2.8 = -7
 const _ANIM_OFFSETS: Dictionary = {
 	"idle": Vector2(0, 0),
-	"run": Vector2(0, -5),
+	"run": Vector2(0, -14),
 	"light_attack": Vector2(0, 0),
-	"heavy_attack": Vector2(0, -7),
+	"heavy_attack": Vector2(0, -20),
 }
 
 signal hp_changed(current: int, max_hp: int)
