@@ -153,16 +153,16 @@ func _spawn_sword_trail(delay: float) -> void:
 	var is_right: bool = _facing_dir.x > 0
 	var dir_x: float = 1.0 if is_right else -1.0
 	
-	var hand_pos: Vector2 = global_position + Vector2(dir_x * 60, -40)
-	var attack_dir: Vector2 = Vector2(dir_x, 0)
+	var hand_pos: Vector2 = global_position + Vector2(dir_x * 50, -55)
+	var attack_dir: Vector2 = Vector2(dir_x, 0.2)
 	
 	var blade: Node2D = SlashBladeScene.instantiate()
-	blade.setup(hand_pos, attack_dir, 120.0, 50.0, 0.22)
+	blade.setup(hand_pos, attack_dir, 100.0, 40.0, 0.22)
 	get_parent().add_child(blade)
 	
 	var trail: Node2D = SwordTrailScene.instantiate()
-	trail.global_position = hand_pos + attack_dir * 70 + Vector2(0, -10)
-	trail.scale = Vector2(2.8, 2.8)
+	trail.global_position = hand_pos + attack_dir * 50 + Vector2(0, -5)
+	trail.scale = Vector2(2.2, 2.2)
 	if not is_right:
 		trail.scale.x *= -1
 	get_parent().add_child(trail)
