@@ -29,7 +29,7 @@ func _build_blade_shape() -> void:
 	var half_len: float = _blade_length * 0.5
 	var half_thick: float = _blade_thickness * 0.5
 	
-	var blade_points: PackedVector2Array = PackedVector2Array(
+	var blade_points: PackedVector2Array = PackedVector2Array([
 		Vector2(-half_len * 0.3, -half_thick * 0.3),
 		Vector2(-half_len * 0.1, -half_thick),
 		Vector2(half_len * 0.5, -half_thick * 0.8),
@@ -38,27 +38,27 @@ func _build_blade_shape() -> void:
 		Vector2(half_len * 0.5, half_thick * 0.8),
 		Vector2(-half_len * 0.1, half_thick),
 		Vector2(-half_len * 0.3, half_thick * 0.3)
-	)
+	])
 	blade.polygon = blade_points
 	
-	var glow_points: PackedVector2Array = PackedVector2Array(
+	var glow_points: PackedVector2Array = PackedVector2Array([
 		Vector2(-half_len * 0.2, -half_thick * 1.3),
 		Vector2(half_len * 0.6, -half_thick * 1.5),
 		Vector2(half_len * 1.1, -half_thick * 0.5),
 		Vector2(half_len * 1.1, half_thick * 0.5),
 		Vector2(half_len * 0.6, half_thick * 1.5),
 		Vector2(-half_len * 0.2, half_thick * 1.3)
-	)
+	])
 	outer_glow.polygon = glow_points
 	
-	var core_points: PackedVector2Array = PackedVector2Array(
+	var core_points: PackedVector2Array = PackedVector2Array([
 		Vector2(-half_len * 0.2, -half_thick * 0.15),
 		Vector2(half_len * 0.4, -half_thick * 0.3),
 		Vector2(half_len * 0.9, -half_thick * 0.1),
 		Vector2(half_len * 0.9, half_thick * 0.1),
 		Vector2(half_len * 0.4, half_thick * 0.3),
 		Vector2(-half_len * 0.2, half_thick * 0.15)
-	)
+	])
 	inner_core.polygon = core_points
 
 func _process(delta: float) -> void:
