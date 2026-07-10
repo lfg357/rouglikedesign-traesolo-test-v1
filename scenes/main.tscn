@@ -217,11 +217,11 @@ position = Vector2(620, 0)
 shape = SubResource("RectangleShape2D_bound")
 
 [node name="BoundTop" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(0, -320)
+position = Vector2(0, -300)
 shape = SubResource("RectangleShape2D_bound_h")
 
 [node name="BoundBottom" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(0, 320)
+position = Vector2(0, 280)
 shape = SubResource("RectangleShape2D_bound_h")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
