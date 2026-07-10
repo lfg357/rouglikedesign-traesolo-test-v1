@@ -74,6 +74,9 @@ func start_run() -> void:
     is_run_active = true
 
 func end_run(victory: bool) -> void:
+    # 幂等保护：同一 run 只结算一次，避免死亡屏被多次打开时重复扣/加业力
+    if not is_run_active:
+        return
     is_run_active = false
     # 死亡给 50 业力，通关给 200
     add_karma(200 if victory else 50)

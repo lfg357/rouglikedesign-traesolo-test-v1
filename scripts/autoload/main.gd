@@ -1,6 +1,6 @@
 extends Node2D
 ## 主场景 · 游戏入口
-## 负责：初始化迷宫、生成玩家、管理战斗房流程
+## 负责：初始化迷宫、生成玩家、管理战斗房流程、UI快捷键
 
 const PlayerScene: PackedScene = preload("res://scenes/player_yan.tscn")
 const EnemyScene: PackedScene = preload("res://scenes/enemy_base.tscn")
@@ -14,12 +14,33 @@ const EnemyScene: PackedScene = preload("res://scenes/enemy_base.tscn")
 var current_grid: Array = []
 var current_room: Vector2i = Vector2i.ZERO
 var player: Node2D = null
+var _kill_count: int = 0
 
 func _ready() -> void:
 	$Background.z_index = -100
 	hit_feel.setup_camera(camera)
 	start_new_run()
 	_spawn_monster_room()
+	# 监听敌人击杀
+	CombatEvents.enemy_killed.connect(_on_enemy_killed)
+
+func _on_enemy_killed(_enemy) -> void:
+	_kill_count += 1
+
+func _unhandled_input(event: InputEvent) -> void:
+	# 暂停菜单（Esc）
+	if event.is_action_pressed("pause") and not get_tree().paused:
+		if not UIManager.has_ui_open():
+			UIManager.open_ui("pause_menu")
+			get_viewport().set_input_as_handled()
+	# 背包（I）
+	if event.is_action_pressed("open_inventory") and not get_tree().paused:
+		UIManager.toggle_ui("inventory")
+		get_viewport().set_input_as_handled()
+	# 五行盘（Tab）
+	if event.is_action_pressed("open_wuxing") and not get_tree().paused:
+		UIManager.toggle_ui("wuxing_board")
+		get_viewport().set_input_as_handled()
 
 func start_new_run() -> void:
 	GameState.start_run()

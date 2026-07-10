@@ -281,6 +281,15 @@ func heal(amount: int) -> void:
 func _die() -> void:
 	player_died.emit()
 	set_physics_process(false)
+	# 打开死亡结算屏
+	var main: Node = get_tree().current_scene
+	var kill_count: int = 0
+	if main and main.has_method("_on_enemy_killed"):
+		kill_count = main._kill_count
+	UIManager.open_ui("death_screen")
+	var death_ui = UIManager.get_ui("death_screen")
+	if death_ui and death_ui.has_method("setup"):
+		death_ui.setup(kill_count)
 
 func _process(delta: float) -> void:
 	if GameState.stats.hp_regen > 0 and current_hp > 0:
