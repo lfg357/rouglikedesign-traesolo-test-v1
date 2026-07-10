@@ -153,7 +153,8 @@ func _spawn_sword_trail(delay: float) -> void:
 	var is_right: bool = _facing_dir.x > 0
 	var dir_x: float = 1.0 if is_right else -1.0
 	
-	var hand_pos: Vector2 = global_position + Vector2(dir_x * 50, -55)
+	var sprite_pos: Vector2 = sprite.global_position
+	var hand_pos: Vector2 = sprite_pos + Vector2(dir_x * 45, -30)
 	var attack_dir: Vector2 = Vector2(dir_x, 0.2)
 	
 	var blade: Node2D = SlashBladeScene.instantiate()

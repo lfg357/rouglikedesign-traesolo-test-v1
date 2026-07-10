@@ -217,15 +217,15 @@ position = Vector2(620, 0)
 shape = SubResource("RectangleShape2D_bound")
 
 [node name="BoundTop" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(0, -340)
+position = Vector2(0, -320)
 shape = SubResource("RectangleShape2D_bound_h")
 
 [node name="BoundBottom" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(0, 340)
+position = Vector2(0, 320)
 shape = SubResource("RectangleShape2D_bound_h")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
-position = Vector2(0, 80)
+position = Vector2(0, 0)
 
 [node name="EnemiesLayer" type="Node2D" parent="."]
 
