@@ -1,7 +1,7 @@
 extends CharacterBody2D
 ## 燕无归 · 身法近战（手感旗舰）
-## 资源：samurai 像素精灵表
-## 修复：脚底对齐 + 剑光拖尾
+## 资源：Tiny RPG Soldier (100x100 统一帧尺寸)
+## 动画：idle(6) / run(8) / light_attack(6) / heavy_attack(9) / hurt(4) / death(4)
 
 class_name PlayerYan
 
@@ -35,14 +35,8 @@ var _iframes: float = 0.0
 
 const SwordTrailScene: PackedScene = preload("res://scenes/effects/sword_trail.tscn")
 
-# 不同动画的脚底对齐偏移（修复 sprite sheet 切片造成的"图片移动"）
-# 0 = idle/light 高度 22; 5 = run 高度 32 差 10px 缩放2.8 = -5; 7 = heavy 高度 36 差 14px 缩放2.8 = -7
-const _ANIM_OFFSETS: Dictionary = {
-	"idle": Vector2(0, 0),
-	"run": Vector2(0, -14),
-	"light_attack": Vector2(0, 0),
-	"heavy_attack": Vector2(0, -20),
-}
+# 新素材 Tiny RPG Soldier 所有帧统一 100x100，角色脚底位置一致
+# 无需帧间偏移补偿（旧 samurai 素材帧高 22~36 不一致才需要）
 
 signal hp_changed(current: int, max_hp: int)
 signal player_died()
@@ -91,8 +85,6 @@ func _play_anim(anim: String) -> void:
 	if sprite.animation == anim:
 		return
 	sprite.stop()
-	if _ANIM_OFFSETS.has(anim):
-		sprite.offset = _ANIM_OFFSETS[anim]
 	sprite.play(anim)
 
 func _update_timers(delta: float) -> void:

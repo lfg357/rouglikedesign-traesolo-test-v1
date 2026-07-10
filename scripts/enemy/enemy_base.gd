@@ -1,6 +1,7 @@
 extends CharacterBody2D
-## 敌人基类 · Demon 像素精灵
-## 资源：Tiny RPG Character Asset Pack 02 (Demon_A)
+## 敌人基类 · Demon A
+## 资源：Tiny RPG Demon_A (100x100 统一帧尺寸, with shadows)
+## 动画：idle(6) / walk(8) / attack(7) / attack2(7) / hurt(4) / death(4)
 
 class_name EnemyBase
 
@@ -36,6 +37,11 @@ func _physics_process(delta: float) -> void:
 
 	if _attack_cd > 0:
 		_attack_cd -= delta
+
+	# hurt 动画期间只执行击退惯性，不执行 AI
+	if sprite.animation == "hurt" and sprite.is_playing():
+		move_and_slide()
+		return
 
 	if _player_ref == null:
 		_find_player()
@@ -81,13 +87,16 @@ func _chase_and_attack(delta: float) -> void:
 
 func _do_attack() -> void:
 	_is_attacking = true
-	sprite.play("attack")
+	var atk_anim: String = "attack2" if randf() < 0.3 else "attack"
+	sprite.play(atk_anim)
 
 func _on_anim_finished() -> void:
-	if sprite.animation == "attack":
+	if sprite.animation in ["attack", "attack2"]:
 		_is_attacking = false
-		if sprite.animation != "idle":
+		if not _is_dead:
 			sprite.play("idle")
+	elif sprite.animation == "death":
+		queue_free()
 
 func _on_player_hit(area: Area2D) -> void:
 	pass
@@ -104,10 +113,13 @@ func take_damage(amount: float, is_crit: bool = false) -> void:
 
 	if current_hp <= 0:
 		_die()
+	else:
+		sprite.play("hurt")
 
 func _die() -> void:
 	_is_dead = true
-	queue_free()
+	velocity = Vector2.ZERO
+	sprite.play("death")
 
 	GameState.add_qi(5)
 	GameState.add_spirit_stone(5)
