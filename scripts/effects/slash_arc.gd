@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var trail: AnimatedSprite2D = $Trail
+var trail: AnimatedSprite2D = null
 
 var _start_pos: Vector2 = Vector2.ZERO
 var _arc_center: Vector2 = Vector2.ZERO
@@ -10,6 +10,12 @@ var _end_angle: float = PI
 var _duration: float = 0.3
 var _timer: float = 0.0
 var _scale_factor: float = 2.5
+var _is_setup: bool = false
+
+func _ready() -> void:
+	trail = $Trail
+	if _is_setup and trail:
+		trail.play("slash")
 
 func setup(start_pos: Vector2, center: Vector2, radius: float, duration: float, is_right: bool, scale_factor: float = 2.5) -> void:
 	_start_pos = start_pos
@@ -27,7 +33,9 @@ func setup(start_pos: Vector2, center: Vector2, radius: float, duration: float, 
 		_start_angle = PI * 0.25
 		_end_angle = PI * 1.25
 	
-	trail.play("slash")
+	_is_setup = true
+	if trail:
+		trail.play("slash")
 	
 	position = _start_pos + _get_arc_point(0)
 
@@ -36,6 +44,9 @@ func _get_arc_point(t: float) -> Vector2:
 	return Vector2(cos(angle), sin(angle)) * _arc_radius
 
 func _process(delta: float) -> void:
+	if not trail or not _is_setup:
+		return
+	
 	_timer += delta
 	if _timer >= _duration:
 		queue_free()
