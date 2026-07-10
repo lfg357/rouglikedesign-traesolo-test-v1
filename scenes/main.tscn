@@ -1,8 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://b8x7k2m5nq3"]
+[gd_scene load_steps=7 format=3 uid="uid://b8x7k2m5nq3"]
 
 [ext_resource type="Script" path="res://scripts/autoload/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/combat/hit_feel_manager.gd" id="2_hitfeel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3_hud"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bound"]
+size = Vector2(20, 720)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bound_h"]
+size = Vector2(1280, 20)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -197,6 +203,26 @@ polygon = PackedVector2Array(-130, -50, 130, -50, 150, 0, 130, 50, -130, 50, -15
 position = Vector2(0, 0)
 zoom = Vector2(1, 1)
 current = true
+
+[node name="Bounds" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 1
+
+[node name="BoundLeft" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(-620, 0)
+shape = SubResource("RectangleShape2D_bound")
+
+[node name="BoundRight" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(620, 0)
+shape = SubResource("RectangleShape2D_bound")
+
+[node name="BoundTop" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(0, -340)
+shape = SubResource("RectangleShape2D_bound_h")
+
+[node name="BoundBottom" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(0, 340)
+shape = SubResource("RectangleShape2D_bound_h")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(0, 80)

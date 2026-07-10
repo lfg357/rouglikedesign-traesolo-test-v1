@@ -73,7 +73,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	_update_anim()
-	z_index = int(global_position.y)
+	z_index = int(global_position.y) + 500
 
 func _update_anim() -> void:
 	if _is_attacking:
@@ -153,19 +153,16 @@ func _spawn_sword_trail(delay: float) -> void:
 	var is_right: bool = _facing_dir.x > 0
 	var dir_x: float = 1.0 if is_right else -1.0
 	
-	# 刀光出手位置：角色手的位置，稍偏上
-	var hand_pos: Vector2 = global_position + Vector2(dir_x * 45, -25)
+	var hand_pos: Vector2 = global_position + Vector2(dir_x * 60, -40)
 	var attack_dir: Vector2 = Vector2(dir_x, 0)
 	
-	# 生成主刀光（月牙形，有厚度）
 	var blade: Node2D = SlashBladeScene.instantiate()
-	blade.setup(hand_pos, attack_dir, 110.0, 45.0, 0.22)
+	blade.setup(hand_pos, attack_dir, 120.0, 50.0, 0.22)
 	get_parent().add_child(blade)
 	
-	# 剑光拖尾（刀光末端，强化打击感）
 	var trail: Node2D = SwordTrailScene.instantiate()
-	trail.global_position = hand_pos + attack_dir * 60 + Vector2(0, -5)
-	trail.scale = Vector2(2.5, 2.5)
+	trail.global_position = hand_pos + attack_dir * 70 + Vector2(0, -10)
+	trail.scale = Vector2(2.8, 2.8)
 	if not is_right:
 		trail.scale.x *= -1
 	get_parent().add_child(trail)

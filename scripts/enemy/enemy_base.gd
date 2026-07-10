@@ -41,7 +41,7 @@ func _physics_process(delta: float) -> void:
 	# hurt 动画期间只执行击退惯性，不执行 AI
 	if sprite.animation == "hurt" and sprite.is_playing():
 		move_and_slide()
-		z_index = int(global_position.y)
+		z_index = int(global_position.y) + 500
 		return
 
 	if _player_ref == null:
@@ -53,7 +53,7 @@ func _physics_process(delta: float) -> void:
 		_chase_and_attack(delta)
 
 	move_and_slide()
-	z_index = int(global_position.y)
+	z_index = int(global_position.y) + 500
 
 func _find_player() -> void:
 	var players: Array = get_tree().get_nodes_in_group("player")
