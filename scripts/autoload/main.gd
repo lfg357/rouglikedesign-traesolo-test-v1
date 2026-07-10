@@ -16,6 +16,7 @@ var current_room: Vector2i = Vector2i.ZERO
 var player: Node2D = null
 
 func _ready() -> void:
+	$Background.z_index = -100
 	hit_feel.setup_camera(camera)
 	start_new_run()
 	_spawn_monster_room()

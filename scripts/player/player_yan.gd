@@ -34,7 +34,7 @@ var _facing_dir: Vector2 = Vector2.RIGHT
 var _iframes: float = 0.0
 
 const SwordTrailScene: PackedScene = preload("res://scenes/effects/sword_trail.tscn")
-const SlashArcScene: PackedScene = preload("res://scenes/effects/slash_arc.tscn")
+const SlashBladeScene: PackedScene = preload("res://scenes/effects/slash_blade.tscn")
 
 # 新素材 Tiny RPG Soldier 所有帧统一 100x100，角色脚底位置一致
 # 无需帧间偏移补偿（旧 samurai 素材帧高 22~36 不一致才需要）
@@ -153,32 +153,22 @@ func _spawn_sword_trail(delay: float) -> void:
 	var is_right: bool = _facing_dir.x > 0
 	var dir_x: float = 1.0 if is_right else -1.0
 	
-	# 弧形挥砍轨迹：3 个剑光节点沿贝塞尔曲线分布
-	var p0: Vector2 = global_position + Vector2(dir_x * 20, -50)   # 起点：角色上方
-	var p1: Vector2 = global_position + Vector2(dir_x * 70, -30)   # 控制点：前方偏上
-	var p2: Vector2 = global_position + Vector2(dir_x * 110, 10)   # 终点：前方偏下
+	# 刀光出手位置：角色手的位置，稍偏上
+	var hand_pos: Vector2 = global_position + Vector2(dir_x * 45, -25)
+	var attack_dir: Vector2 = Vector2(dir_x, 0)
 	
-	for i in range(3):
-		var t: float = float(i) / 2.0  # 0.0, 0.5, 1.0
-		var pos: Vector2 = _bezier(p0, p1, p2, t)
-		
-		var trail: Node2D = SwordTrailScene.instantiate()
-		trail.global_position = pos
-		trail.scale = Vector2(3.5, 3.5)
-		if not is_right:
-			trail.scale.x *= -1
-		
-		# 旋转：从左上(-45°)到右下(+45°)形成弧形
-		var rot: float = lerp(-0.8, 0.6, t)
-		if not is_right:
-			rot = lerp(0.8, -0.6, t)
-		trail.rotation = rot
-		
-		get_parent().add_child(trail)
-
-func _bezier(p0: Vector2, p1: Vector2, p2: Vector2, t: float) -> Vector2:
-	var u: float = 1.0 - t
-	return u * u * p0 + 2.0 * u * t * p1 + t * t * p2
+	# 生成主刀光（月牙形，有厚度）
+	var blade: Node2D = SlashBladeScene.instantiate()
+	blade.setup(hand_pos, attack_dir, 110.0, 45.0, 0.22)
+	get_parent().add_child(blade)
+	
+	# 剑光拖尾（刀光末端，强化打击感）
+	var trail: Node2D = SwordTrailScene.instantiate()
+	trail.global_position = hand_pos + attack_dir * 60 + Vector2(0, -5)
+	trail.scale = Vector2(2.5, 2.5)
+	if not is_right:
+		trail.scale.x *= -1
+	get_parent().add_child(trail)
 
 func _process_attack(delta: float) -> void:
 	_attack_timer -= delta
@@ -238,6 +228,9 @@ func _on_hit_enemy(area: Area2D) -> void:
 	if is_crit:
 		damage *= GameState.stats.crit_damage
 
+	# 命中迸发：在命中点生成一个刀光爆发效果
+	_spawn_hit_burst(area.global_position, is_crit)
+
 	CombatEvents.trigger_hit(area.global_position, damage, is_crit, "water")
 
 	if GameState.stats.lifesteal > 0:
@@ -245,6 +238,15 @@ func _on_hit_enemy(area: Area2D) -> void:
 
 	if target.has_method("take_damage"):
 		target.take_damage(damage, is_crit)
+
+func _spawn_hit_burst(pos: Vector2, is_crit: bool) -> void:
+	var burst: Node2D = SlashBladeScene.instantiate()
+	var burst_dir: Vector2 = _facing_dir
+	var burst_len: float = 60.0 if not is_crit else 100.0
+	var burst_thick: float = 30.0 if not is_crit else 50.0
+	burst.setup(pos, burst_dir, burst_len, burst_thick, 0.15)
+	burst.scale *= 1.2 if is_crit else 0.8
+	get_parent().add_child(burst)
 
 func _on_enemy_attack_hit(area: Area2D) -> void:
 	if _iframes > 0:
