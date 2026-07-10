@@ -14,6 +14,8 @@ const UI_SCENES: Dictionary = {
 	"shop_ui": preload("res://scenes/ui/shop_ui.tscn"),
 	"wuxing_board": preload("res://scenes/ui/wuxing_board_ui.tscn"),
 	"inventory": preload("res://scenes/ui/inventory_ui.tscn"),
+	"minimap_ui": preload("res://scenes/ui/minimap_ui.tscn"),
+	"event_ui": preload("res://scenes/ui/event_ui.tscn"),
 }
 
 # ─── 界面栈 ───
@@ -23,7 +25,7 @@ var _ui_stack: Array = []  # 存 CanvasLayer 实例
 var _instances: Dictionary = {}  # name → CanvasLayer 实例缓存
 
 # 哪些界面会暂停游戏
-const PAUSING_UIS: Array = ["main_menu", "pause_menu", "settings", "death_screen", "floor_clear", "relic_select", "shop_ui", "wuxing_board", "inventory"]
+const PAUSING_UIS: Array = ["main_menu", "pause_menu", "settings", "death_screen", "floor_clear", "relic_select", "shop_ui", "wuxing_board", "inventory", "minimap_ui", "event_ui"]
 
 signal ui_opened(ui_name: String)
 signal ui_closed(ui_name: String)
