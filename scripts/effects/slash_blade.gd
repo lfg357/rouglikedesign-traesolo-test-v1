@@ -1,8 +1,8 @@
 extends Node2D
 
-@onready var blade: Polygon2D = $Blade
-@onready var outer_glow: Polygon2D = $OuterGlow
-@onready var inner_core: Polygon2D = $InnerCore
+var blade: Polygon2D = null
+var outer_glow: Polygon2D = null
+var inner_core: Polygon2D = null
 
 var _start_pos: Vector2 = Vector2.ZERO
 var _dir: Vector2 = Vector2.RIGHT
@@ -11,6 +11,14 @@ var _blade_thickness: float = 40.0
 var _duration: float = 0.2
 var _timer: float = 0.0
 var _is_right: bool = true
+var _is_setup: bool = false
+
+func _ready() -> void:
+	blade = $Blade
+	outer_glow = $OuterGlow
+	inner_core = $InnerCore
+	if _is_setup:
+		_build_blade_shape()
 
 func setup(start_pos: Vector2, direction: Vector2, length: float, thickness: float, duration: float) -> void:
 	_start_pos = start_pos
@@ -23,7 +31,9 @@ func setup(start_pos: Vector2, direction: Vector2, length: float, thickness: flo
 	position = _start_pos
 	rotation = _dir.angle()
 	
-	_build_blade_shape()
+	_is_setup = true
+	if blade:
+		_build_blade_shape()
 
 func _build_blade_shape() -> void:
 	var half_len: float = _blade_length * 0.5
