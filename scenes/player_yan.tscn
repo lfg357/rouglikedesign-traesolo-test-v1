@@ -315,19 +315,19 @@ collision_layer = 1
 collision_mask = 1
 
 [node name="BodyShape" type="CollisionShape2D" parent="."]
-position = Vector2(0, 20)
+position = Vector2(0, 40)
 shape = SubResource("RectangleShape2D_body")
 
 [node name="Visual" type="Node2D" parent="."]
 
 [node name="Shadow" type="Polygon2D" parent="Visual"]
-position = Vector2(0, 36)
+position = Vector2(0, 68)
 color = Color(0.05, 0.03, 0.06, 0.45)
-polygon = PackedVector2Array(-22, -3, 22, -3, 28, 5, -28, 5)
+polygon = PackedVector2Array(-30, -4, 30, -4, 38, 6, -38, 6)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visual"]
-position = Vector2(0, -20)
-scale = Vector2(0.8, 0.8)
+position = Vector2(0, 30)
+scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_soldier")
 animation = &"idle"
 
@@ -341,7 +341,7 @@ shape = SubResource("RectangleShape2D_hit")
 [node name="Hurtbox" type="Area2D" parent="."]
 
 [node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2(0, 20)
+position = Vector2(0, 40)
 shape = SubResource("RectangleShape2D_hurt")
 
 [node name="AfterimageTimer" type="Timer" parent="."]
