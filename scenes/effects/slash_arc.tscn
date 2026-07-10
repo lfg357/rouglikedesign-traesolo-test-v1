@@ -1,0 +1,51 @@
+[gd_scene load_steps=9 format=3 uid="uid://slash_arc"]
+
+[ext_resource type="Script" path="res://scripts/effects/slash_arc.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/effects/slash_0.png" id="2_f0"]
+[ext_resource type="Texture2D" path="res://assets/effects/slash_1.png" id="3_f1"]
+[ext_resource type="Texture2D" path="res://assets/effects/slash_2.png" id="4_f2"]
+[ext_resource type="Texture2D" path="res://assets/effects/slash_3.png" id="5_f3"]
+[ext_resource type="Texture2D" path="res://assets/effects/slash_4.png" id="6_f4"]
+[ext_resource type="Texture2D" path="res://assets/effects/slash_5.png" id="7_f5"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_slash"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_f0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_f1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_f2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_f3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_f4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_f5")
+}],
+"loop": false,
+"name": &"slash",
+"speed": 24.0
+}]
+
+[node name="SlashArc" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Trail" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_slash")
+animation = &"slash"
+centered = true
+
+[node name="ArcParticles" type="Particle2D" parent="."]
+amount = 12
+lifetime = 0.3
+speed = Vector2(30, 30)
+spread = 360
+scale = Vector2(2.0, 2.0)
+emitting = false

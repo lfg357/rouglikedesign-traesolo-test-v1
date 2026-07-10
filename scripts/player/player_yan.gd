@@ -34,9 +34,12 @@ var _facing_dir: Vector2 = Vector2.RIGHT
 var _iframes: float = 0.0
 
 const SwordTrailScene: PackedScene = preload("res://scenes/effects/sword_trail.tscn")
+const SlashArcScene: PackedScene = preload("res://scenes/effects/slash_arc.tscn")
 
 # 新素材 Tiny RPG Soldier 所有帧统一 100x100，角色脚底位置一致
 # 无需帧间偏移补偿（旧 samurai 素材帧高 22~36 不一致才需要）
+# 角色尺寸: 100x100 @ scale 1.5 → 150x150
+# 手的位置: 角色中心偏上，约在 (facing_dir.x * 60, -20) 相对于角色原点
 
 signal hp_changed(current: int, max_hp: int)
 signal player_died()
@@ -142,12 +145,23 @@ func _start_attack() -> void:
 	_update_hitbox_position()
 
 func _spawn_sword_trail(delay: float) -> void:
-	# 延迟到挥剑中后段生成剑光，位置在 hitbox 中心
 	await get_tree().create_timer(delay).timeout
 	if not is_inside_tree():
 		return
+	
+	var is_right: bool = _facing_dir.x > 0
+	
+	var hand_offset: Vector2 = _facing_dir * 60 + Vector2(0, -20)
+	var arc_center: Vector2 = global_position + _facing_dir * 30 + Vector2(0, -10)
+	var arc_radius: float = 55.0
+	var arc_duration: float = 0.25
+	
+	var arc: Node2D = SlashArcScene.instantiate()
+	arc.setup(global_position + hand_offset, arc_center, arc_radius, arc_duration, is_right, 2.8)
+	get_parent().add_child(arc)
+	
 	var trail: Node2D = SwordTrailScene.instantiate()
-	trail.global_position = global_position + _facing_dir * 50
+	trail.global_position = global_position + _facing_dir * 70 + Vector2(0, -15)
 	if _facing_dir.x < 0:
 		trail.scale = Vector2(-2.0, 2.0)
 	get_parent().add_child(trail)
