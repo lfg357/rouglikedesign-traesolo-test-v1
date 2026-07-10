@@ -41,11 +41,3 @@ script = ExtResource("1_script")
 sprite_frames = SubResource("SpriteFrames_slash")
 animation = &"slash"
 centered = true
-
-[node name="ArcParticles" type="Particle2D" parent="."]
-amount = 12
-lifetime = 0.3
-speed = Vector2(30, 30)
-spread = 360
-scale = Vector2(2.0, 2.0)
-emitting = false

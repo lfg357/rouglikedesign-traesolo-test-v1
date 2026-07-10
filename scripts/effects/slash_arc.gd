@@ -1,7 +1,6 @@
 extends Node2D
 
 @onready var trail: AnimatedSprite2D = $Trail
-@onready var particles: Particle2D = $ArcParticles
 
 var _start_pos: Vector2 = Vector2.ZERO
 var _arc_center: Vector2 = Vector2.ZERO
@@ -29,7 +28,6 @@ func setup(start_pos: Vector2, center: Vector2, radius: float, duration: float, 
 		_end_angle = PI * 1.25
 	
 	trail.play("slash")
-	particles.emitting = true
 	
 	position = _start_pos + _get_arc_point(0)
 
@@ -51,4 +49,3 @@ func _process(delta: float) -> void:
 	
 	var fade: float = max(0.0, 1.0 - t * 1.5)
 	trail.modulate.a = fade
-	particles.modulate.a = fade
