@@ -74,6 +74,8 @@ func _chase_and_attack(delta: float) -> void:
 	var dist: float = global_position.distance_to(_player_ref.global_position)
 
 	sprite.flip_h = dir.x < 0
+	# 攻击判定盒跟随朝向
+	attack_hitbox.position.x = (40.0 if dir.x >= 0 else -40.0)
 
 	if dist > attack_range:
 		velocity = dir * move_speed

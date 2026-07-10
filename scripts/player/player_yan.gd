@@ -153,17 +153,18 @@ func _spawn_sword_trail(delay: float) -> void:
 	var is_right: bool = _facing_dir.x > 0
 	var dir_x: float = 1.0 if is_right else -1.0
 	
-	var sprite_pos: Vector2 = sprite.global_position
-	var hand_pos: Vector2 = sprite_pos + Vector2(dir_x * 45, -30)
-	var attack_dir: Vector2 = Vector2(dir_x, 0.2)
+	# 角色脚底在 global_position，身体在脚底上方约 33px（scale 1.5）
+	# 手部位置：脚底上方 18px（身体中部），前方 40px
+	var hand_pos: Vector2 = global_position + Vector2(dir_x * 40, -18)
+	var attack_dir: Vector2 = Vector2(dir_x, 0.15)
 	
 	var blade: Node2D = SlashBladeScene.instantiate()
-	blade.setup(hand_pos, attack_dir, 100.0, 40.0, 0.22)
+	blade.setup(hand_pos, attack_dir, 90.0, 35.0, 0.22)
 	get_parent().add_child(blade)
 	
 	var trail: Node2D = SwordTrailScene.instantiate()
-	trail.global_position = hand_pos + attack_dir * 50 + Vector2(0, -5)
-	trail.scale = Vector2(2.2, 2.2)
+	trail.global_position = hand_pos + Vector2(dir_x * 35, -5)
+	trail.scale = Vector2(2.0, 2.0)
 	if not is_right:
 		trail.scale.x *= -1
 	get_parent().add_child(trail)
@@ -181,7 +182,8 @@ func _on_anim_finished() -> void:
 		_play_anim("idle")
 
 func _update_hitbox_position() -> void:
-	hitbox.position = _facing_dir * 50.0
+	# 保持 y 在身体中部（-22），只根据朝向改 x
+	hitbox.position = Vector2(_facing_dir.x * 50.0, -22.0)
 
 func _dash_on_third_hit() -> void:
 	_dash_timer = DASH_DURATION
@@ -226,10 +228,11 @@ func _on_hit_enemy(area: Area2D) -> void:
 	if is_crit:
 		damage *= GameState.stats.crit_damage
 
-	# 命中迸发：在命中点生成一个刀光爆发效果
-	_spawn_hit_burst(area.global_position, is_crit)
+	# 命中迸发：在命中点（敌人身体中部）生成刀光爆发效果
+	var hit_pos: Vector2 = area.global_position + Vector2(0, -24)
+	_spawn_hit_burst(hit_pos, is_crit)
 
-	CombatEvents.trigger_hit(area.global_position, damage, is_crit, "water")
+	CombatEvents.trigger_hit(hit_pos, damage, is_crit, "water")
 
 	if GameState.stats.lifesteal > 0:
 		heal(int(damage * GameState.stats.lifesteal))
