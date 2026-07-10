@@ -42,18 +42,19 @@ func setup_camera(cam: Camera2D) -> void:
 	camera = cam
 
 func _on_hit(position: Vector2, damage: float, is_crit: bool, element: String) -> void:
-	var stop_duration: float = 0.06
+	var stop_duration: float = 0.08
 	if is_crit:
-		stop_duration = 0.12
+		stop_duration = 0.18
 	_trigger_hit_stop(stop_duration)
 	
-	var shake: float = 3.0
+	var shake: float = 5.0
 	if is_crit:
-		shake = 8.0
-	_trigger_shake(shake, 0.15)
+		shake = 12.0
+	_trigger_shake(shake, 0.2)
 	
 	_spawn_ink_burst(position, element, is_crit)
 	_spawn_damage_number(position, damage, is_crit)
+	_flash_screen(is_crit)
 
 func _on_crit(position: Vector2) -> void:
 	pass
@@ -71,11 +72,24 @@ func _trigger_shake(intensity: float, duration: float) -> void:
 		_shake_intensity = intensity
 	_shake_timer = max(_shake_timer, duration)
 
+func _flash_screen(is_crit: bool) -> void:
+	var flash: ColorRect = ColorRect.new()
+	flash.color = Color(1.0, 1.0, 1.0, 0.15 if not is_crit else 0.3)
+	flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if camera and camera.get_parent():
+		camera.get_parent().add_child(flash)
+		var tween: Tween = flash.create_tween()
+		tween.tween_property(flash, "modulate:a", 0.0, 0.08)
+		tween.tween_callback(flash.queue_free)
+
 func _spawn_ink_burst(position: Vector2, element: String, is_crit: bool) -> void:
 	var effect: Node2D = HitInkEffect.instantiate()
 	effect.global_position = position
 	if is_crit:
-		effect.scale = Vector2(1.8, 1.8)
+		effect.scale = Vector2(2.5, 2.5)
+	else:
+		effect.scale = Vector2(1.5, 1.5)
 	if camera and camera.get_parent():
 		camera.get_parent().add_child(effect)
 	elif get_tree().current_scene:

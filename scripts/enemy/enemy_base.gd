@@ -41,6 +41,7 @@ func _physics_process(delta: float) -> void:
 	# hurt 动画期间只执行击退惯性，不执行 AI
 	if sprite.animation == "hurt" and sprite.is_playing():
 		move_and_slide()
+		z_index = int(global_position.y)
 		return
 
 	if _player_ref == null:
@@ -52,6 +53,7 @@ func _physics_process(delta: float) -> void:
 		_chase_and_attack(delta)
 
 	move_and_slide()
+	z_index = int(global_position.y)
 
 func _find_player() -> void:
 	var players: Array = get_tree().get_nodes_in_group("player")
@@ -111,10 +113,17 @@ func take_damage(amount: float, is_crit: bool = false) -> void:
 		var knockback: Vector2 = (global_position - _player_ref.global_position).normalized() * 50.0
 		velocity += knockback
 
+	_flash_white()
+
 	if current_hp <= 0:
 		_die()
 	else:
 		sprite.play("hurt")
+
+func _flash_white() -> void:
+	sprite.modulate = Color(2.0, 2.0, 2.0, 1.0)
+	var tween: Tween = create_tween()
+	tween.tween_property(sprite, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.15)
 
 func _die() -> void:
 	_is_dead = true

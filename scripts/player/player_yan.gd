@@ -73,6 +73,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	_update_anim()
+	z_index = int(global_position.y)
 
 func _update_anim() -> void:
 	if _is_attacking:
@@ -150,21 +151,34 @@ func _spawn_sword_trail(delay: float) -> void:
 		return
 	
 	var is_right: bool = _facing_dir.x > 0
+	var dir_x: float = 1.0 if is_right else -1.0
 	
-	var hand_offset: Vector2 = _facing_dir * 60 + Vector2(0, -20)
-	var arc_center: Vector2 = global_position + _facing_dir * 30 + Vector2(0, -10)
-	var arc_radius: float = 55.0
-	var arc_duration: float = 0.25
+	# 弧形挥砍轨迹：3 个剑光节点沿贝塞尔曲线分布
+	var p0: Vector2 = global_position + Vector2(dir_x * 20, -50)   # 起点：角色上方
+	var p1: Vector2 = global_position + Vector2(dir_x * 70, -30)   # 控制点：前方偏上
+	var p2: Vector2 = global_position + Vector2(dir_x * 110, 10)   # 终点：前方偏下
 	
-	var arc: Node2D = SlashArcScene.instantiate()
-	arc.setup(global_position + hand_offset, arc_center, arc_radius, arc_duration, is_right, 2.8)
-	get_parent().add_child(arc)
-	
-	var trail: Node2D = SwordTrailScene.instantiate()
-	trail.global_position = global_position + _facing_dir * 70 + Vector2(0, -15)
-	if _facing_dir.x < 0:
-		trail.scale = Vector2(-2.0, 2.0)
-	get_parent().add_child(trail)
+	for i in range(3):
+		var t: float = float(i) / 2.0  # 0.0, 0.5, 1.0
+		var pos: Vector2 = _bezier(p0, p1, p2, t)
+		
+		var trail: Node2D = SwordTrailScene.instantiate()
+		trail.global_position = pos
+		trail.scale = Vector2(3.5, 3.5)
+		if not is_right:
+			trail.scale.x *= -1
+		
+		# 旋转：从左上(-45°)到右下(+45°)形成弧形
+		var rot: float = lerp(-0.8, 0.6, t)
+		if not is_right:
+			rot = lerp(0.8, -0.6, t)
+		trail.rotation = rot
+		
+		get_parent().add_child(trail)
+
+func _bezier(p0: Vector2, p1: Vector2, p2: Vector2, t: float) -> Vector2:
+	var u: float = 1.0 - t
+	return u * u * p0 + 2.0 * u * t * p1 + t * t * p2
 
 func _process_attack(delta: float) -> void:
 	_attack_timer -= delta
